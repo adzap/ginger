@@ -1,3 +1,4 @@
+require 'rubygems'
 require 'ginger/configuration'
 require 'ginger/scenario'
 require 'ginger/kernel'
@@ -5,7 +6,7 @@ require 'ginger/kernel'
 module Ginger
   module Version
     Major = 1
-    Minor = 0
+    Minor = 1
     Tiny  = 0
     
     String = [Major, Minor, Tiny].join('.')
