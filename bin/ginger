@@ -20,6 +20,23 @@ USAGE
   exit 0
 end
 
+def run_scenario(name, ruby_version=nil)
+  puts <<-SCENARIO
+
+-------------------
+Ginger Scenario: #{name} #{", Ruby " + ruby_version if ruby_version}
+-------------------
+  SCENARIO
+  
+  command = "rake #{ARGV.join(" ")}"
+
+  if ruby_version
+    system("rvm-prompt use #{ruby_version} && #{command}; rvm-prompt use system")
+  else
+    system(comand)
+  end
+end
+
 file_path = File.join Dir.pwd, ".ginger"
 
 File.delete(file_path) if File.exists?(file_path)
@@ -28,15 +45,15 @@ scenarios = Ginger::Configuration.instance.scenarios
 puts "No Ginger Scenarios defined" if scenarios.empty?
 
 scenarios.each_with_index do |scenario, index|
-  puts <<-SCENARIO
-
--------------------
-Ginger Scenario: #{scenario.name || index+1}
--------------------
-  SCENARIO
-  
   File.open('.ginger', 'w') { |f| f.write index.to_s }
-  system("rake #{ARGV.join(" ")}")
+
+  if scenario.ruby_versions.empty?
+    run_scenario(scenario.name || index)
+  else
+    scenario.ruby_versions.each do |version|
+      run_scenario(scenario.name || index, version)
+    end
+  end
 end
 
 File.delete(file_path) if File.exists?(file_path)
