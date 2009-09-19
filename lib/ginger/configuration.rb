@@ -10,6 +10,14 @@ module Ginger
       @scenarios = []
       @aliases   = {}
     end
+
+    def scenario(options=nil, &block)
+      raise "Scenario method must be passed a block" unless block_given?
+
+      scenario = ::Ginger::Scenario.new(options)
+      yield scenario
+      @scenarios << scenario
+    end
     
     def self.detect_scenario_file
       ['.','spec','test'].each do |path|

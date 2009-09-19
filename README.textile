@@ -17,6 +17,27 @@ Step number three is creating the sets of scenarios in a file called @ginger_sce
 Ginger.configure do |config|
   config.aliases["active_record"] = "activerecord"
   
+  config.scenario('ActiveRecord 1.2.6') do |s|
+    s.add /^active_?record$/, '1.15.6'
+  end
+
+  config.scenario('ActiveRecord 2.0.2') do |s|
+    s.add /^active_?record$/, '2.0.2'
+  end
+
+  config.scenario('ActiveRecord 2.1.1') do |s|
+    s.add /^active_?record$/, '2.0.2'
+  end
+end</code></pre>
+
+Above, I've added three different scenarios, for three different versions of ActiveRecord. I also added an alias, as people sometimes use the underscore, and sometimes don't. The gem's name has no underscore though, so the _value_ of the alias matches the gem name (whereas the key would be alternative usage).
+
+The older style of defining scenarios is still perfectly valid.
+
+<pre><code>
+Ginger.configure do |config|
+  config.aliases["active_record"] = "activerecord"
+  
   ar_1_2_6 = Ginger::Scenario.new
   ar_1_2_6[/^active_?record$/] = "1.15.6"
   
@@ -29,19 +50,16 @@ Ginger.configure do |config|
   config.scenarios << ar_1_2_6 << ar_2_0_2 << ar_2_1_1
 end</code></pre>
 
-Above, I've added three different scenarios, for three different versions of ActiveRecord. I also added an alias, as people sometimes use the underscore, and sometimes don't. The gem's name has no underscore though, so the _value_ of the alias matches the gem name (whereas the key would be alternative usage).
-
 You can have multiple gems set in each scenario - and you don't have to use regular expressions, you can just use straight strings.
 
-<pre><code>sphinx_scenario = Ginger::Scenario.new
-sphinx_scenario["riddle"] = "0.9.8"
-sphinx_scenario["thinking_sphinx"] = "0.9.8"</code></pre>
+<pre><code>
+config.scenario('Thinking Sphinx 0.9.8') do |s|
+  s.add "riddle", "0.9.8"
+  s.add "thinking_sphinx", "0.9.8"
+end
+</code></pre>
 
-Don't forget to add them to @config@'s scenarios collection, else they're not saved anywhere.
-
-To better discern different defined scenarios you can create them with a name. The name will be output when the scenario runs as the title. 
-
-<pre><code>sphinx_scenario = Ginger::Scenario.new('Thinking Sphinx 0.9.8')</code></pre>
+Passing a name to the scenario block is optional, but aids readibility when there are many scenarios as it is output above the tests or specs being executed.
 
 And finally, you'll want to run the tests or specs for each scenario. This is done using the @ginger@ CLI tool, which parrots whatever parameters you give it onto @rake@. So just do something like:
 
